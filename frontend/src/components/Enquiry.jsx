@@ -12,25 +12,44 @@ export default function Enquiry() {
         email: "",
         phone: "",
         message: "",
+        _id: ""
     })
 
 
     const saveEnquiry = (e) => {
         e.preventDefault()
 
-        axios.post(`http://localhost:8020/api/website/enquiry/insert`, formData).then((res) => {
-            console.log(res.data);
-            toast.success('Enquiry sent successfully');
 
-
-            setFormData({
-                name: "",
-                email: "",
-                phone: "",
-                message: "",
+        if (formData._id) {
+            // update ka kaam krna ha.
+            axios.put(`http://localhost:8020/api/website/enquiry/update/${formData._id}`, formData).then((res) => {
+                toast.success('Enquiry Updated Successfully')
+                setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    message: ''
+                })
+                getAllEnquiry()
             })
-            getAllEnquiry();
-        })
+        } else {
+            // insert ka kaam krna ha.
+            axios.post(`http://localhost:8020/api/website/enquiry/insert`, formData).then((res) => {
+                console.log(res.data);
+                toast.success('Enquiry sent successfully');
+
+
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    message: "",
+                })
+                getAllEnquiry();
+            })
+        }
+
+
     }
 
     const getAllEnquiry = () => {
@@ -59,11 +78,11 @@ export default function Enquiry() {
     return (
         <div>
             <ToastContainer />
-            <h1 className="text-[40px] text-center py-6 font-bold">User Enguiry</h1>
+            <h1 className="text-[40px] text-center py-6 font-bold font-[Gilroy]">User Enquiry</h1>
             <div className="grid-cols-[30%_auto] grid px-4 gap-10">
                 {/* left part */}
                 <div className="bg-gray-200 p-4 rounded-md">
-                    <h2 className="text-[20px] font-bold">Enquiry Form</h2>
+                    <h2 className="text-[20px] font-bold font-[Gilroy]">Enquiry Form</h2>
                     <form
                         action=""
                         onSubmit={saveEnquiry}
@@ -132,13 +151,15 @@ export default function Enquiry() {
                         <div className="py-3 flex items-center justify-center">
                             <button
                                 type="submit"
-                                className="text-white w-full bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 md:px-44 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:text-lg">
-                                Save
+                                className="text-white w-full bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 md:px-40 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:text-lg">
+                                {
+                                    formData._id ? "Update" : "Save"
+                                }
                             </button>
                         </div>
                     </form>
                 </div>
-                <EnquiryList data={enquiryList} getAllEnquiry={getAllEnquiry} Swal={Swal} />
+                <EnquiryList data={enquiryList} getAllEnquiry={getAllEnquiry} Swal={Swal} setFormData={setFormData} />
             </div>
         </div>
     )

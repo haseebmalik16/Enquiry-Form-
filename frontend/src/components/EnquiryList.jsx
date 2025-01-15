@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-export default function EnquiryList({ data, getAllEnquiry,Swal }) {
+export default function EnquiryList({ data, getAllEnquiry, Swal, setFormData }) {
 
     const deleteRow = (delid) => {
         Swal.fire({
@@ -8,25 +8,32 @@ export default function EnquiryList({ data, getAllEnquiry,Swal }) {
             showDenyButton: true,
             showCancelButton: true,
             confirmButtonText: 'Save'
-        }).then((result)=>{
-            if(result.isConfirmed){
+        }).then((result) => {
+            if (result.isConfirmed) {
                 axios.delete(`http://localhost:8020/api/website/enquiry/delete/${delid}`).then((res) => {
                     toast.success('Enquiry deleted successfully.');
                     getAllEnquiry();
                 })
 
-                Swal.fire("Saved","","success");
-            }else if(result.isDenied){
-                Swal.fire("changes are not saved","","info");
+                Swal.fire("Saved", "", "success");
+            } else if (result.isDenied) {
+                Swal.fire("changes are not saved", "", "info");
             }
         })
     };
+
+    const editRow = (editid) => {
+        axios.get(`http://localhost:8020/api/website/enquiry/single/${editid}`).then((res) => {
+            const data = res.data;
+            setFormData(data.enquiry)
+        })
+    }
 
     return (
         <>
             {/* right part */}
             <div className="bg-gray-200 p-4 rounded-md">
-                <h2 className="text-[20px] font-bold mb-3">Enquiry List</h2>
+                <h2 className="text-[20px] font-bold mb-3 font-[Gilroy]">Enquiry List</h2>
 
                 <div className="relative overflow-x-auto rounded-md">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -63,13 +70,13 @@ export default function EnquiryList({ data, getAllEnquiry,Swal }) {
                                             <th scope="col" className="px-6 py-3">
                                                 <a
                                                     onClick={() => deleteRow(item._id)}
-                                                    className="font-medium text-red-600 hover:underline"
+                                                    className="font-medium text-red-600 hover:underline cursor-pointer"
                                                 >
                                                     Delete
                                                 </a>
                                             </th>
                                             <th scope="col" className="px-6 py-3">
-                                                <a href="#" className="font-medium text-cyan-600 hover:underline">
+                                                <a onClick={() => editRow(item._id)} className="font-medium text-cyan-600 hover:underline cursor-pointer">
                                                     Edit
                                                 </a>
                                             </th>

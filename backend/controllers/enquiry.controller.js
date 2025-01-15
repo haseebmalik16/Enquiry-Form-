@@ -17,15 +17,37 @@ const enquiryInsert = (req, res) => {
 }
 
 // List all enquiries.
-const enquiryList = async (req,res)=>{
+const enquiryList = async (req, res) => {
     const enquiry = await enquiryModel.find();
-    res.send({ status: 1, enquiryList: enquiry});
-} 
+    res.send({ status: 1, enquiryList: enquiry });
+}
 
 // delete enquiry.
-const enquiryDelete = async (req,res)=>{
+const enquiryDelete = async (req, res) => {
     const enId = req.params.id;
-    const enquiry = await enquiryModel.deleteOne({_id: enId});
-    res.send({ status: 1, message: "Enquiry deleted successfully.",enquiry });
+    const enquiry = await enquiryModel.deleteOne({ _id: enId });
+    res.send({ status: 1, message: "Enquiry deleted successfully.", enquiry });
 }
-module.exports = { enquiryInsert ,enquiryList,enquiryDelete};
+
+// Edit enquiry.
+const enquirySingleRow = async (req,res)=>{
+    const enId = req.params.id;
+    const enquiry = await enquiryModel.findById(enId);
+    res.send({ status: 1, enquiry });
+}
+
+// update row.
+const enquiryUpdateRow = async(req,res)=>{
+    const enquiryId = req.params.id;
+    const {name,email,phone,message}=req.body;
+    const updateObj={
+        name,
+        email,
+        phone,
+        message
+    };
+    const updateRes = await enquiryModel.updateOne({_id:enquiryId},updateObj)
+    res.send({ status: 1, message: "Enquiry updated successfully.", updateRes });
+}
+
+module.exports = { enquiryInsert, enquiryList, enquiryDelete ,enquirySingleRow,enquiryUpdateRow};
